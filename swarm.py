@@ -1,6 +1,7 @@
 import sys
 import uuid
 import copy
+import time
 import stratus
 
 from config import config
@@ -13,12 +14,9 @@ class service(stratus.stratus):
     """
     The launcher service for micropython
     """
-    def __init__(self):
-        super(service, self).__init__()
-        self.service_name = "swarm"
 
     def launch(self, *args, **kwargs):
-        print "Starting service..."
+        print "Starting service...", args[0]
         launch(*args, **kwargs)
         return True
 
@@ -47,11 +45,15 @@ def main():
     launch("swarm")
     client = stratus.client()
     client.connect(name="proxy_starter")
-    # print client.connected()
-    result = client.call("swarm", "launch", "proxy")
-    print result()
+    services = ["proxy", "db", "api", "web"]
+    for name in services:
+        result = client("swarm", "launch", name)()
+        if result:
+            print "Launched", name
+        else:
+            print "Failed to launch", name
     while True:
-        pass
+        time.sleep(300)
     return
 
 if __name__ == '__main__':
