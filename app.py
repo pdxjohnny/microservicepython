@@ -35,6 +35,7 @@ def arg_setup():
     arg_parser.add_argument('--no-daemon', dest='daemon', action='store_false', \
         help="Start as a daemon")
     arg_parser.set_defaults(daemon=config["arg_defaults"]["daemon"])
+    arg_parser.set_defaults(save_pid=True)
     arg_parser.add_argument("--version", "-v", action="version", \
         version=u"micropython version " + unicode(config["version"]) )
     initial = vars(arg_parser.parse_args())
@@ -64,7 +65,7 @@ def stop(options):
         pass
     return False
 
-def make_daemon(options):
+def make_daemon(options={}):
     # Daemonize to run in background
     pid = os.fork()
     if pid > 0:
@@ -74,9 +75,10 @@ def make_daemon(options):
     if pid > 0:
         # exit second parent
         sys.exit(0)
-    pid_file = open("daemon.pid", "wb")
-    pid_file.write(str(os.getpid()))
-    pid_file.close()
+    if "save_pid" in options:
+        pid_file = open("daemon.pid", "wb")
+        pid_file.write(str(os.getpid()))
+        pid_file.close()
     if "output" in options:
         output = options["output"]
     elif os.name == "nt":
