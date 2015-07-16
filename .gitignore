@@ -1,2 +1,4 @@
 *.pyc
 *.pid
+*.bowerrc
+bower_components

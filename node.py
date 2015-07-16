@@ -4,18 +4,18 @@ import stratus
 
 from config import config
 
+HOST_AND_PORT = "get_host_and_port"
+
 class service(stratus.stratus):
     """
     A swarm node that lets the swarm manger know
     how many requests it has processed
     """
 
-    def log(self, arg):
-        del arg
-
     def __init__(self):
         super(service, self).__init__()
         self.requests_per_min = 0
+        self.webserver = False
         self.monitor = True
         thread.start_new_thread(self.monitor_requests, ())
 
@@ -36,3 +36,12 @@ class service(stratus.stratus):
         if self.monitor:
             self.requests_per_min += 1
         return super(service, self).call_method(data)
+
+    def get_host_and_port(self):
+        if self.webserver:
+            sock_addr = self.webserver.socket.getsockname()
+            return {
+                "host": sock_addr[0],
+                "port": sock_addr[1]
+            }
+        return {}

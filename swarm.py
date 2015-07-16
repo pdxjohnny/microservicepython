@@ -19,14 +19,6 @@ class service(stratus.stratus):
     The launcher service for micropython
     """
 
-    def log(self, arg):
-        del arg
-
-    def _recv(self, sock):
-        data = super(service, self)._recv(sock)
-        # print "RECEVED", data
-        return data
-
     def post_call(self, request):
         recv_data = self.form_data(request['data'])
         service_name = recv_data.get("service", True)

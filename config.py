@@ -12,7 +12,7 @@ config = {
         "max_requests": 10,
     },
     # Proxy webserver options
-    "webserver": {
+    "proxy": {
         "port": 9000,
     },
     # Website options

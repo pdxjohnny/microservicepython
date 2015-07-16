@@ -1,0 +1,22 @@
+{
+  "name": "dat",
+  "version": "0.0.0",
+  "authors": [
+    "John Andersen <johnandersenpdx@gmail.com>"
+  ],
+  "description": "Distributed Automated Testing Javascript",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap-table": "~1.8.1",
+    "bootstrap": "~3.3.5",
+    "TableDnD": "~0.9.1",
+    "jquery-ui": "~1.11.4"
+  }
+}
