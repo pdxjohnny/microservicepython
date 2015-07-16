@@ -10,6 +10,9 @@ class service(stratus.stratus):
     how many requests it has processed
     """
 
+    def log(self, arg):
+        del arg
+
     def __init__(self):
         super(service, self).__init__()
         self.requests_per_min = 0

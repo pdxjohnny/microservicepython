@@ -15,6 +15,11 @@ config = {
     "webserver": {
         "port": 9000,
     },
+    # Website options
+    "website": {
+        "static": "static",
+        "index": "index.html",
+    },
     # Swarm options
     "swarm": {
         "launch_wait": 0.05,
