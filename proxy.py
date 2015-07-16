@@ -1,19 +1,21 @@
-import stratus
 import SimpleHTTPSServer
 
+import node
 from config import config
 
-class service(stratus.stratus):
+class service(node.service):
     """
     The proxy service for micropython
     """
+
     def __init__(self):
         super(service, self).__init__()
+        # Never kill this process even if it gets no requests
+        self.monitor = False
         self.webserver = False
         self.start_webserver()
 
     def start_webserver(self):
-        print "Starting webserver..."
         if not self.webserver:
             self.webserver = webserver(self)
             self.webserver.start(**config["webserver"])
@@ -25,12 +27,13 @@ class webserver(SimpleHTTPSServer.handler):
     Requests are processed by self.stratus_client
     which automaticly distributes requests to services
     """
+
     def __init__(self, stratus_client):
         super(webserver, self).__init__()
         self.stratus_client = stratus_client
         self.actions = [
-            ('post', '/api/:username', self.api, self.auth),
-            ('get', '/api/:username', self.api, self.auth),
+            ('post', '/api/:file', self.api, self.auth),
+            ('get', '/api/:file', self.api, self.auth),
             ('get', '/:file', self.web, self.auth)
         ]
 

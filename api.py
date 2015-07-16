@@ -1,8 +1,7 @@
-import stratus
-
+import node
 from config import config
 
-class service(stratus.stratus):
+class service(node.service):
     """
     The api service for micropython
     """

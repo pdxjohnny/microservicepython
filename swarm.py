@@ -2,7 +2,11 @@ import sys
 import uuid
 import copy
 import time
+import json
+import thread
+import random
 import stratus
+import datetime
 
 from config import config
 import proxy
@@ -15,12 +19,24 @@ class service(stratus.stratus):
     The launcher service for micropython
     """
 
-    def launch(self, *args, **kwargs):
-        print "Starting service...", args[0]
-        launch(*args, **kwargs)
-        return True
+    def post_call(self, request):
+        recv_data = self.form_data(request['data'])
+        service_name = recv_data.get("service", True)
+        # print service_name
+        services = [node for node in self.clients \
+            if "service" in self.clients[node] \
+                and self.clients[node]["service"] == service_name]
+        # print services
+        if len(services) < 1:
+            self.launch(service_name)
+            time.sleep(config["swarm"]["launch_wait"])
+        return super(service, self).post_call(request)
 
-def launch(service_name):
+    def launch(self, *args, **kwargs):
+        return launch(*args, **kwargs)
+
+def launch(service_name, extra_options={}):
+    print "Starting {}...".format(service_name)
     # Get the module the service is in
     if service_name == "swarm":
         module = sys.modules[__name__]
@@ -29,7 +45,8 @@ def launch(service_name):
     # Get the service
     to_launch = getattr(module, "service")
     # Set the options
-    options = copy.deepcopy(config)
+    options = copy.deepcopy(config["service"])
+    options.update(extra_options)
     options.update({
         # Random name so all services dont connect with same hostname
         "name": str(uuid.uuid4()),
@@ -40,21 +57,4 @@ def launch(service_name):
     to_launch = to_launch()
     # Start the service
     to_launch.connect(**options)
-
-def main():
-    launch("swarm")
-    client = stratus.client()
-    client.connect(name="proxy_starter")
-    services = ["proxy", "db", "api", "web"]
-    for name in services:
-        result = client("swarm", "launch", name)()
-        if result:
-            print "Launched", name
-        else:
-            print "Failed to launch", name
-    while True:
-        time.sleep(300)
-    return
-
-if __name__ == '__main__':
-    main()
+    return options
